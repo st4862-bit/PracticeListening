@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Café English: Interactive Listening Practice</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Playfair Display for a cozy, academic feel -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght=0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        coffee: {
+                            50: '#FDFBF7',
+                            100: '#F8F1E5',
+                            200: '#EADBC8',
+                            300: '#DAC0A3',
+                            400: '#C08261',
+                            500: '#9A3B3B',
+                            600: '#731E1E',
+                            800: '#2F1F17',
+                            900: '#1D110B',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #F8F1E5;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #DAC0A3;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="bg-coffee-50 text-coffee-900 min-h-screen flex flex-col font-sans">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-coffee-200 py-4 px-6 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2.5 bg-coffee-100 rounded-2xl border border-coffee-300 text-coffee-600">
+                    <i data-lucide="coffee" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="font-serif text-2xl font-bold tracking-tight text-coffee-800">Café Conversation</h1>
+                    <p class="text-xs text-coffee-400 tracking-wide uppercase">English Listening Practice Board</p>
+                </div>
+            </div>
+            
+            <!-- Overall Progress Indicator -->
+            <div class="flex items-center gap-2 bg-coffee-100/50 px-4 py-2 rounded-xl border border-coffee-200">
+                <span class="text-xs font-semibold text-coffee-600 uppercase">Progress</span>
+                <div class="w-32 bg-coffee-200 h-2.5 rounded-full overflow-hidden">
+                    <div id="global-progress" class="bg-coffee-500 h-full w-[10%] transition-all duration-500"></div>
+                </div>
+                <span id="global-progress-text" class="text-xs font-bold text-coffee-800">10%</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="flex-grow max-w-6xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Interactive Progress Map / Stages Navigator (Left Sidebar on Desktop) -->
+        <div class="lg:col-span-3 flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0">
+            <button onclick="switchStage('pre')" id="nav-pre" class="stage-nav-btn flex-shrink-0 flex items-center gap-3 px-4 py-3 rounded-xl border text-left transition-all w-full min-w-[180px] bg-coffee-800 text-white border-coffee-800 shadow-md">
+                <span class="w-8 h-8 rounded-lg flex items-center justify-center bg-coffee-600 font-bold text-sm">1</span>
+                <div>
+                    <p class="text-xs font-semibold opacity-70 uppercase tracking-wider">Before</p>
+                    <p class="text-sm font-bold">Image Prep</p>
+                </div>
+            </button>
+            <button onclick="switchStage('while')" id="nav-while" class="stage-nav-btn flex-shrink-0 flex items-center gap-3 px-4 py-3 rounded-xl border text-left transition-all w-full min-w-[180px] bg-white text-coffee-800 border-coffee-200 hover:bg-coffee-100/50">
+                <span class="w-8 h-8 rounded-lg flex items-center justify-center bg-coffee-200 text-coffee-700 font-bold text-sm">2</span>
+                <div>
+                    <p class="text-xs font-semibold text-coffee-400 uppercase tracking-wider">While</p>
+                    <p class="text-sm font-bold">Audio & Details</p>
+                </div>
+            </button>
+            <button onclick="switchStage('post')" id="nav-post" class="stage-nav-btn flex-shrink-0 flex items-center gap-3 px-4 py-3 rounded-xl border text-left transition-all w-full min-w-[180px] bg-white text-coffee-800 border-coffee-200 hover:bg-coffee-100/50">
+                <span class="w-8 h-8 rounded-lg flex items-center justify-center bg-coffee-200 text-coffee-700 font-bold text-sm">3</span>
+                <div>
+                    <p class="text-xs font-semibold text-coffee-400 uppercase tracking-wider">Post</p>
+                    <p class="text-sm font-bold">Analysis & Skill</p>
+                </div>
+            </button>
+            <button onclick="switchStage('results')" id="nav-results" class="stage-nav-btn flex-shrink-0 flex items-center gap-3 px-4 py-3 rounded-xl border text-left transition-all w-full min-w-[180px] bg-white text-coffee-800 border-coffee-200 hover:bg-coffee-100/50">
+                <span class="w-8 h-8 rounded-lg flex items-center justify-center bg-coffee-200 text-coffee-700 font-bold text-sm">✓</span>
+                <div>
+                    <p class="text-xs font-semibold text-coffee-400 uppercase tracking-wider">Final</p>
+                    <p class="text-sm font-bold">Results Board</p>
+                </div>
+            </button>
+        </div>
+
+        <!-- Interactive Whiteboard Content Area (Center/Right Grid) -->
+        <div class="lg:col-span-9 flex flex-col gap-6">
+            
+            <!-- STAGE 1: BEFORE LISTENING -->
+            <div id="stage-pre" class="stage-section flex flex-col gap-6">
+                <div class="bg-white rounded-3xl p-6 border border-coffee-200 shadow-sm">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="px-2.5 py-1 bg-coffee-100 text-coffee-600 rounded-lg text-xs font-bold uppercase tracking-wider">Stage 1</span>
+                        <h2 class="font-serif text-2xl font-bold text-coffee-800">Before Listening: Visual Context</h2>
+                    </div>
+                    <p class="text-coffee-600 text-sm">
+                        Analyze the coffee shop scenes below carefully. Try to guess who the characters are, where they are from, and what is about to happen before you hear their conversation! Click on the tabs below to view each high-resolution image.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Interactive Image Viewer with Tabs & Active Highlight -->
+                    <div class="bg-white rounded-3xl p-4 border border-coffee-200 shadow-sm flex flex-col gap-4">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-coffee-100 pb-2">
+                            <span class="text-xs font-bold uppercase text-coffee-600 tracking-wider">Visual Board</span>
+                            
+                            <!-- Toggle Mode switcher: Photos vs Vectors Fallback -->
+                            <div class="flex bg-coffee-100 p-0.5 rounded-lg border border-coffee-200 text-xs font-semibold">
+                                <button onclick="setViewerMode('photo')" id="mode-btn-photo" class="px-2.5 py-1 rounded-md transition-all bg-white text-coffee-800 shadow-sm">Photos</button>
+                                <button onclick="setViewerMode('vector')" id="mode-btn-vector" class="px-2.5 py-1 rounded-md transition-all text-coffee-500 hover:text-coffee-800">Storyboard</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Primary Active Image Viewport -->
+                        <div class="relative overflow-hidden rounded-2xl bg-coffee-100 border border-coffee-200 aspect-[16/10] flex items-center justify-center">
+                            
+                            <!-- REAL PHOTO WRAPPERS (Capitalized Filenames) -->
+                            <div id="photo-container" class="w-full h-full">
+                                <!-- Image 1 -->
+                                <img id="img-viewport-1" src="Image1.jpg" onerror="handleImageLoadError(1)" alt="Sofia's Latte Cup" class="w-full h-full object-cover transition-opacity duration-300">
+                                <!-- Image 2 -->
+                                <img id="img-viewport-2" src="Image2.jpg" onerror="handleImageLoadError(2)" alt="Dialogue Scene" class="w-full h-full object-cover hidden transition-opacity duration-300">
+                                <!-- Image 3 -->
+                                <img id="img-viewport-3" src="Image3.jpg" onerror="handleImageLoadError(3)" alt="World Origins Map" class="w-full h-full object-cover hidden transition-opacity duration-300">
+                                <!-- Image 4 -->
+                                <img id="img-viewport-4" src="Image4.jpg" onerror="handleImageLoadError(4)" alt="Bruno the Dog Waiting" class="w-full h-full object-cover hidden transition-opacity duration-300">
+                            </div>
+                            
+                            <!-- ILLUSTRATION FALLBACK WRAPPERS (Always reliable inside any sandbox) -->
+                            <div id="vector-container" class="hidden w-full h-full">
+                                <div id="svg-fallback-1" class="hidden w-full h-full bg-orange-50 flex flex-col items-center justify-center text-center p-4">
+                                    <div class="p-4 bg-white rounded-3xl shadow-sm border border-orange-100 mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" class="w-16 h-16 text-coffee-600">
+                                            <path fill="currentColor" d="M12 20h32v24H12zm32 4h4a4 4 0 0 1 4 4v6a4 4 0 0 1-4 4h-4zM8 48h40v4H8z"/>
+                                            <text x="28" y="34" font-size="7" font-family="sans-serif" font-weight="bold" fill="#FFF" text-anchor="middle">Sofia</text>
+                                        </svg>
+                                    </div>
+                                    <p class="text-sm font-bold text-coffee-800">Image 1: Coffee Cup Misunderstanding</p>
+                                    <p class="text-xs text-coffee-500 max-w-xs mt-1">Takeaway coffee cups sitting on the counter, one clearly labeled with the name "Sofia".</p>
+                                </div>
+
+                                <div id="svg-fallback-2" class="hidden w-full h-full bg-emerald-50 flex flex-col items-center justify-center text-center p-4">
+                                    <div class="flex gap-4 items-center justify-center mb-3">
+                                        <div class="w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center text-lg font-bold text-white shadow-sm">S</div>
+                                        <span class="text-2xl text-emerald-500 animate-pulse">↔</span>
+                                        <div class="w-12 h-12 rounded-full bg-coffee-600 flex items-center justify-center text-lg font-bold text-white shadow-sm">L</div>
+                                    </div>
+                                    <p class="text-sm font-bold text-coffee-800">Image 2: Friendly Interaction</p>
+                                    <p class="text-xs text-coffee-500 max-w-xs mt-1">Sophia and Lucas talking face-to-face in the cozy café workspace, smiling through the confusion.</p>
+                                </div>
+
+                                <div id="svg-fallback-3" class="hidden w-full h-full bg-blue-50 flex flex-col items-center justify-center text-center p-4">
+                                    <div class="p-3 bg-white rounded-3xl shadow-sm border border-blue-100 mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" class="w-16 h-16 text-blue-500">
+                                            <circle cx="20" cy="25" r="14" fill="#cbd5e1"/>
+                                            <circle cx="45" cy="40" r="14" fill="#cbd5e1"/>
+                                            <!-- Brazil Pin -->
+                                            <circle cx="24" cy="28" r="4" fill="#10B981" class="animate-ping"/>
+                                            <circle cx="24" cy="28" r="3" fill="#10B981"/>
+                                            <!-- Italy Pin -->
+                                            <circle cx="42" cy="20" r="4" fill="#EF4444" class="animate-ping"/>
+                                            <circle cx="42" cy="20" r="3" fill="#EF4444"/>
+                                        </svg>
+                                    </div>
+                                    <p class="text-sm font-bold text-coffee-800">Image 3: Cultural Backgrounds Map</p>
+                                    <p class="text-xs text-coffee-500 max-w-xs mt-1">A pinboard world map tracking Sophia's roots in Rome, Italy and Lucas's home country of Brazil.</p>
+                                </div>
+
+                                <div id="svg-fallback-4" class="hidden w-full h-full bg-yellow-50 flex flex-col items-center justify-center text-center p-4">
+                                    <div class="p-3 bg-white rounded-3xl shadow-sm border border-yellow-100 mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" class="w-16 h-16 text-amber-500">
+                                            <path fill="currentColor" d="M32 10a12 12 0 0 1 12 12c0 8.8-12 24-12 24S20 30.8 20 22a12 12 0 0 1 12-12zm0 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/>
+                                        </svg>
+                                    </div>
+                                    <p class="text-sm font-bold text-coffee-800">Image 4: Dog Outside the Window</p>
+                                    <p class="text-xs text-coffee-500 max-w-xs mt-1">A golden dog named Bruno looking longingly through the front glass window of the coffee shop.</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Selector Thumbnail Buttons -->
+                        <div class="grid grid-cols-4 gap-2">
+                            <button id="thumb-btn-1" onclick="selectVisualTab(1)" class="p-1 border-2 border-coffee-600 rounded-xl bg-coffee-50 overflow-hidden transition-all duration-200">
+                                <div class="aspect-square bg-coffee-100 rounded-lg overflow-hidden relative">
+                                    <img id="thumb-img-1" src="Image1.jpg" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-coffee-900/10 flex items-center justify-center text-white font-bold text-xs">1</div>
+                                </div>
+                            </button>
+                            <button id="thumb-btn-2" onclick="selectVisualTab(2)" class="p-1 border border-coffee-200 rounded-xl bg-white overflow-hidden hover:border-coffee-400 transition-all duration-200">
+                                <div class="aspect-square bg-coffee-100 rounded-lg overflow-hidden relative">
+                                    <img id="thumb-img-2" src="Image2.jpg" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-coffee-900/10 flex items-center justify-center text-white font-bold text-xs">2</div>
+                                </div>
+                            </button>
+                            <button id="thumb-btn-3" onclick="selectVisualTab(3)" class="p-1 border border-coffee-200 rounded-xl bg-white overflow-hidden hover:border-coffee-400 transition-all duration-200">
+                                <div class="aspect-square bg-coffee-100 rounded-lg overflow-hidden relative">
+                                    <img id="thumb-img-3" src="Image3.jpg" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-coffee-900/10 flex items-center justify-center text-white font-bold text-xs">3</div>
+                                </div>
+                            </button>
+                            <button id="thumb-btn-4" onclick="selectVisualTab(4)" class="p-1 border border-coffee-200 rounded-xl bg-white overflow-hidden hover:border-coffee-400 transition-all duration-200">
+                                <div class="aspect-square bg-coffee-100 rounded-lg overflow-hidden relative">
+                                    <img id="thumb-img-4" src="Image4.jpg" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-coffee-900/10 flex items-center justify-center text-white font-bold text-xs">4</div>
+                                </div>
+                            </button>
+                        </div>
+
+                        <!-- Local Image File Loader Helper (Extremely robust sandbox bypass) -->
+                        <div class="p-3 bg-coffee-100/50 rounded-xl border border-coffee-200 flex flex-col justify-between items-center gap-2">
+                            <span class="text-[11px] text-coffee-600 font-medium text-center">If sandbox rules block relative images, select your 4 screenshot files to load them instantly:</span>
+                            <label class="inline-flex items-center gap-1 px-4 py-2 bg-coffee-600 hover:bg-coffee-700 text-white text-xs font-bold rounded-lg cursor-pointer transition shadow-sm">
+                                <i data-lucide="upload" class="w-4 h-4"></i>
+                                Select 4 Screenshots Locally
+                                <input type="file" multiple accept="image/*" class="hidden" onchange="handleLocalImages(this)">
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Questions Container -->
+                    <div class="flex flex-col gap-4">
+                        <div class="bg-coffee-100/50 rounded-2xl p-4 border border-coffee-200 flex items-center justify-between">
+                            <h3 class="font-bold text-sm text-coffee-800">Pre-Listening Questions</h3>
+                            <span class="text-xs bg-coffee-300 text-coffee-800 px-2 py-0.5 rounded-full font-bold" id="pre-answered-count">0/4 Answered</span>
+                        </div>
+                        
+                        <div id="pre-questions" class="flex flex-col gap-4 max-h-[500px] overflow-y-auto pr-1 custom-scrollbar">
+                            <!-- JS Dynamically injects questions here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-4">
+                    <button onclick="switchStage('while')" class="px-6 py-3 bg-coffee-600 hover:bg-coffee-700 text-white font-bold rounded-xl transition flex items-center gap-2 shadow-md">
+                        Proceed to Listening
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STAGE 2: WHILE LISTENING -->
+            <div id="stage-while" class="stage-section hidden flex flex-col gap-6">
+                <!-- Audio Center & Control Panel -->
+                <div class="bg-white rounded-3xl p-6 border border-coffee-200 shadow-sm">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="px-2.5 py-1 bg-coffee-500 text-white rounded-lg text-xs font-bold uppercase tracking-wider">Stage 2</span>
+                        <h2 class="font-serif text-2xl font-bold text-coffee-800">While Listening: Active Processing</h2>
+                    </div>
+                    <p class="text-coffee-600 text-sm mb-6">
+                        Play the audio recording below. Pay attention to their tones, pronunciation, and the vocabulary they use to answer both global and detail questions.
+                    </p>
+
+                    <!-- Beautiful Custom Audio Player -->
+                    <div class="bg-coffee-100/80 rounded-2xl p-5 border border-coffee-300 flex flex-col gap-4">
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <!-- Icon & Title -->
+                            <div class="flex items-center gap-3">
+                                <div id="audio-state-icon" class="w-12 h-12 rounded-full bg-coffee-500 text-white flex items-center justify-center">
+                                    <i data-lucide="music" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-coffee-800 text-sm sm:text-base">Coffee-conversation.mp3</p>
+                                    <p class="text-xs text-coffee-500">Sophia & Lucas conversation</p>
+                                </div>
+                            </div>
+                            <!-- Native Controls Custom Styled Integration -->
+                            <audio id="audio-player" class="hidden" src="Coffee-conversation.mp3" preload="auto" controls></audio>
+                            
+                            <!-- Custom Control Controls -->
+                            <div class="flex items-center gap-2">
+                                <button onclick="rewindAudio(10)" class="p-2.5 bg-white hover:bg-coffee-50 border border-coffee-200 rounded-xl text-coffee-700 transition" title="Rewind 10s">
+                                    <i data-lucide="rewind" class="w-5 h-5"></i>
+                                </button>
+                                <button id="play-pause-btn" onclick="togglePlay()" class="px-5 py-2.5 bg-coffee-600 hover:bg-coffee-700 text-white rounded-xl font-bold transition flex items-center gap-2 shadow-sm">
+                                    <i data-lucide="play" class="w-5 h-5" id="play-icon"></i>
+                                    <span id="play-text">Play Audio</span>
+                                </button>
+                                <button onclick="forwardAudio(10)" class="p-2.5 bg-white hover:bg-coffee-50 border border-coffee-200 rounded-xl text-coffee-700 transition" title="Forward 10s">
+                                    <i data-lucide="fast-forward" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Styled Progress Bar & Time -->
+                        <div class="flex flex-col gap-2">
+                            <div class="flex items-center gap-3">
+                                <span id="audio-current-time" class="text-xs font-bold text-coffee-600">0:00</span>
+                                <div class="flex-grow bg-coffee-200 rounded-full h-2 relative cursor-pointer group" id="audio-progress-container" onclick="seekAudio(event)">
+                                    <div id="audio-progress" class="bg-coffee-500 h-full rounded-full w-0 transition-all duration-100"></div>
+                                </div>
+                                <span id="audio-duration" class="text-xs font-bold text-coffee-600">0:00</span>
+                            </div>
+
+                            <!-- Resilient Local File Uploader (Only displays if browser prevents relative requests) -->
+                            <div id="audio-error-fallback" class="hidden mt-2 p-3 bg-red-50 border border-red-200 rounded-xl text-center">
+                                <p class="text-xs text-red-800 font-medium mb-2">Browser blocked reading the file due to iframe sandbox restrictions.</p>
+                                <label class="inline-flex items-center gap-2 px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg cursor-pointer transition">
+                                    <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+                                    Select Coffee-conversation.mp3 locally
+                                    <input type="file" accept="audio/*" class="hidden" onchange="handleLocalAudio(this)">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Section A: Listening for Main Idea -->
+                    <div class="bg-white rounded-3xl p-6 border border-coffee-200 shadow-sm flex flex-col gap-4">
+                        <div class="flex items-center justify-between border-b border-coffee-100 pb-3">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="compass" class="w-5 h-5 text-coffee-500"></i>
+                                <h3 class="font-bold text-coffee-800">Listening for Main Idea</h3>
+                            </div>
+                            <span class="text-xs bg-coffee-100 text-coffee-600 px-2 py-0.5 rounded-full font-bold">Gist</span>
+                        </div>
+                        <div id="while-gist-questions" class="flex flex-col gap-4">
+                            <!-- JS Dynamically injects questions here -->
+                        </div>
+                    </div>
+
+                    <!-- Section B: Listening for Details -->
+                    <div class="bg-white rounded-3xl p-6 border border-coffee-200 shadow-sm flex flex-col gap-4">
+                        <div class="flex items-center justify-between border-b border-coffee-100 pb-3">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="search" class="w-5 h-5 text-coffee-500"></i>
+                                <h3 class="font-bold text-coffee-800">Listening for Details</h3>
+                            </div>
+                            <span class="text-xs bg-coffee-100 text-coffee-600 px-2 py-0.5 rounded-full font-bold">Details & Inference</span>
+                        </div>
+                        <div id="while-detail-questions" class="flex flex-col gap-4 max-h-[400px] overflow-y-auto pr-1 custom-scrollbar">
+                            <!-- JS Dynamically injects questions here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Auxiliary Support: Transcript (Pedagogical scaffolding) -->
+                <div class="bg-white rounded-3xl border border-coffee-200 overflow-hidden shadow-sm">
+                    <button onclick="toggleTranscript()" class="w-full flex items-center justify-between px-6 py-4 bg-coffee-100/50 hover:bg-coffee-100 text-left transition font-semibold text-coffee-800">
+                        <span class="flex items-center gap-2 text-sm sm:text-base">
+                            <i data-lucide="file-text" class="w-5 h-5 text-coffee-500"></i>
+                            Need Help? Toggle Conversation Transcript & Translation
+                        </span>
+                        <i data-lucide="chevron-down" id="transcript-chevron" class="w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div id="transcript-content" class="hidden px-6 py-5 bg-white border-t border-coffee-100 text-sm leading-relaxed max-h-[350px] overflow-y-auto custom-scrollbar">
+                        <div class="space-y-4">
+                            <div class="flex gap-4">
+                                <span class="font-bold text-coffee-600 min-w-[70px]">Sophia:</span>
+                                <div>
+                                    <p class="text-coffee-800">Oh, um, excuse me?</p>
+                                    <p class="text-xs text-coffee-400 mt-0.5">Oh, um, desculpe? / Oh, um, scusa?</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <span class="font-bold text-coffee-500 min-w-[70px]">Lucas:</span>
+                                <div>
+                                    <p class="text-coffee-800">Oh, hi, yes?</p>
+                                    <p class="text-xs text-coffee-400 mt-0.5">Ah, oi, sim? / Oh, ciao, sì?</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <span class="font-bold text-coffee-600 min-w-[70px]">Sophia:</span>
+                                <div>
+                                    <p class="text-coffee-800">I think that is my coffee.</p>
+                                    <p class="text-xs text-coffee-400 mt-0.5">Eu acho que este café é o meu. / Penso che questo seja il meu caffè.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <span class="font-bold text-coffee-500 min-w-[70px]">Lucas:</span>
+                                <div>
+                                    <p class="text-coffee-800">Oh no, really? Oh wow, you are right! It says Sophia. My name is Lucas. I am so sorry.</p>
+                                    <p class="text-xs text-coffee-400 mt-0.5">Ah não, sério? Caramba, você tem razão! Diz Sophia. Meu nome is Lucas. Me desculpe.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4 font-serif italic text-coffee-500 bg-coffee-50 p-2 rounded-lg">
+                                <span class="text-xs font-semibold uppercase not-italic tracking-wider">Note:</span>
+                                <span class="text-xs">The dialogue progresses into Lucas learning that Sophia is from Rome, Italy, while Lucas is from Brazil. Sophia points out a cute dog named Bruno outside, owned by her friend Marco, before having to leave because her sister arrives.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center mt-4">
+                    <button onclick="switchStage('pre')" class="px-5 py-3 bg-white hover:bg-coffee-50 text-coffee-800 font-bold rounded-xl border border-coffee-200 transition flex items-center gap-2">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        Back to Pre-Listening
+                    </button>
+                    <button onclick="switchStage('post')" class="px-6 py-3 bg-coffee-600 hover:bg-coffee-700 text-white font-bold rounded-xl transition flex items-center gap-2 shadow-md">
+                        Proceed to Post-Listening
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STAGE 3: POST LISTENING -->
+            <div id="stage-post" class="stage-section hidden flex flex-col gap-6">
+                <div class="bg-white rounded-3xl p-6 border border-coffee-200 shadow-sm">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="px-2.5 py-1 bg-coffee-600 text-white rounded-lg text-xs font-bold uppercase tracking-wider">Stage 3</span>
+                        <h2 class="font-serif text-2xl font-bold text-coffee-800">Post Listening: Analytical Reasoning</h2>
+                    </div>
+                    <p class="text-coffee-600 text-sm">
+                        Reflect deeply on the conversation, the social behaviors of both Lucas and Sophia, and make predictions about their personalities and next steps.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-3xl p-6 border border-coffee-200 shadow-sm flex flex-col gap-4">
+                    <div class="flex items-center justify-between border-b border-coffee-100 pb-3">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="brain-circuit" class="w-5 h-5 text-coffee-500"></i>
+                            <h3 class="font-bold text-coffee-800">Reflective & Comprehension Questions</h3>
+                        </div>
+                        <span class="text-xs bg-coffee-300 text-coffee-800 px-2.5 py-0.5 rounded-full font-bold" id="post-answered-count">0/5 Answered</span>
+                    </div>
+
+                    <div id="post-questions" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- JS Dynamically injects questions here -->
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center mt-4">
+                    <button onclick="switchStage('while')" class="px-5 py-3 bg-white hover:bg-coffee-50 text-coffee-800 font-bold rounded-xl border border-coffee-200 transition flex items-center gap-2">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        Back to Listening
+                    </button>
+                    <button onclick="switchStage('results')" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl transition flex items-center gap-2 shadow-md">
+                        Check All Results & Submit
+                        <i data-lucide="check-circle" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- RESULTS BOARD -->
+            <div id="stage-results" class="stage-section hidden flex flex-col gap-6">
+                <!-- Main Board Card -->
+                <div class="bg-white rounded-3xl p-8 border-2 border-coffee-300 shadow-lg text-center relative overflow-hidden">
+                    <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-coffee-400 via-coffee-500 to-coffee-600"></div>
+                    
+                    <div class="w-20 h-20 bg-coffee-100 text-coffee-600 rounded-full flex items-center justify-center mx-auto mb-4 border border-coffee-200">
+                        <i data-lucide="award" class="w-10 h-10"></i>
+                    </div>
+
+                    <h2 class="font-serif text-3xl font-bold text-coffee-800 mb-2">Your Listening Assessment Board</h2>
+                    <p class="text-coffee-500 text-sm max-w-md mx-auto mb-6">Excellent job completing all segments of this interactive listening session!</p>
+
+                    <!-- Score Badges Grid -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto mb-8">
+                        <div class="p-4 bg-coffee-50 rounded-2xl border border-coffee-200">
+                            <p class="text-xs text-coffee-400 font-bold uppercase tracking-wider mb-1">Pre-Listening</p>
+                            <p class="text-2xl font-serif font-black text-coffee-800" id="res-score-pre">0 / 4</p>
+                        </div>
+                        <div class="p-4 bg-coffee-50 rounded-2xl border border-coffee-200">
+                            <p class="text-xs text-coffee-400 font-bold uppercase tracking-wider mb-1">While-Listening</p>
+                            <p class="text-2xl font-serif font-black text-coffee-800" id="res-score-while">0 / 5</p>
+                        </div>
+                        <div class="p-4 bg-coffee-50 rounded-2xl border border-coffee-200">
+                            <p class="text-xs text-coffee-400 font-bold uppercase tracking-wider mb-1">Post-Listening</p>
+                            <p class="text-2xl font-serif font-black text-coffee-800" id="res-score-post">0 / 5</p>
+                        </div>
+                        <div class="p-4 bg-coffee-100 rounded-2xl border border-coffee-300">
+                            <p class="text-xs text-coffee-500 font-bold uppercase tracking-wider mb-1">Total Accuracy</p>
+                            <p class="text-2xl font-serif font-black text-coffee-600" id="res-score-total">0%</p>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Summary message -->
+                    <div class="bg-coffee-50 p-5 rounded-2xl border border-coffee-200 max-w-xl mx-auto mb-8 text-left">
+                        <h4 class="font-bold text-coffee-800 flex items-center gap-2 mb-2">
+                            <i data-lucide="message-square" class="w-4 h-4 text-coffee-500"></i>
+                            Tutor's Evaluation Note
+                        </h4>
+                        <p id="tutor-feedback-msg" class="text-sm text-coffee-600 leading-relaxed">
+                            Complete all questions across the three stages to receive your personalized evaluation report and listening strategy advice.
+                        </p>
+                    </div>
+
+                    <!-- Reset Options -->
+                    <div class="flex justify-center gap-3">
+                        <button onclick="restartBoard()" class="px-6 py-3 bg-coffee-600 hover:bg-coffee-700 text-white font-bold rounded-xl transition flex items-center gap-2 shadow-md">
+                            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                            Reset & Practice Again
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-coffee-900 text-coffee-300 py-6 border-t border-coffee-800 text-center px-4 mt-12">
+        <p class="text-xs font-semibold uppercase tracking-widest text-coffee-400 mb-2">Interactive Language Sandbox</p>
+        <p class="text-xs text-coffee-500">Practice listening, observe interaction dynamics, and master situational comprehension.</p>
+    </footer>
+
+    <!-- Interactive Logic & Question States -->
+    <script>
+        // Question Databases
+        const preQuestions = [
+            {
+                id: "pre-1",
+                text: "Look at Image 1. Where do you think the two people are?",
+                options: [
+                    { key: "a", text: "In a library." },
+                    { key: "b", text: "In a coffee shop." },
+                    { key: "c", text: "At a supermarket." }
+                ],
+                correct: "b",
+                explanation: "The prominent 'LATTE' chalkboard sign and takeaway cups clearly indicate a cozy cafe or coffee shop layout."
+            },
+            {
+                id: "pre-2",
+                text: "Look at Image 2. What do you think happens between the two characters at the beginning?",
+                options: [
+                    { key: "a", text: "They are fighting because they don't like each other." },
+                    { key: "b", text: "They are meeting for a job interview." },
+                    { key: "c", text: "There is a funny mistake or confusion between them." }
+                ],
+                correct: "c",
+                explanation: "The woman is laughing and gesturing cheerfully, while the man has a slightly flustered, surprised look, suggesting a lighthearted misunderstanding or accidental mistake."
+            },
+            {
+                id: "pre-3",
+                text: "Look at Image 3. Where do you imagine the people in the conversation are from?",
+                options: [
+                    { key: "a", text: "From the United States and Canada." },
+                    { key: "b", text: "In Italy and Brazil." },
+                    { key: "c", text: "From Spain and France." }
+                ],
+                correct: "b",
+                explanation: "The cork map exhibits flag pins stuck squarely on Italy and Brazil, signaling the origin roots of Sophia and Lucas."
+            },
+            {
+                id: "pre-4",
+                text: "Look at Image 4. What do the characters see at the end of their conversation?",
+                options: [
+                    { key: "a", text: "A cute dog outside." },
+                    { key: "b", text: "A big bus." },
+                    { key: "c", text: "A rain storm." }
+                ],
+                correct: "a",
+                explanation: "Image 4 portrays a handsome golden retriever waiting obediently on the street pavement outside the coffee shop window."
+            }
+        ];
+
+        const whileGistQuestions = [
+            {
+                id: "while-gist-1",
+                text: "What happened during the audio? (Gist)",
+                options: [
+                    { key: "a", text: "Lucas invited Sofia to go on a date" },
+                    { key: "b", text: "Sofia invited Lucas to go to Italy" },
+                    { key: "c", text: "Lucas took Sofia’s coffee" },
+                    { key: "d", text: "Sofia gave a coffee to Lucas" }
+                ],
+                correct: "c",
+                explanation: "The central event that sparks the interaction is Lucas taking the wrong coffee cup, which has Sofia's name written on it."
+            }
+        ];
+
+        const whileDetailQuestions = [
+            {
+                id: "while-det-1",
+                text: "Who is the owner of the coffee?",
+                options: [
+                    { key: "a", text: "Lucas" },
+                    { key: "b", text: "Sofia" },
+                    { key: "c", text: "Marco" },
+                    { key: "d", text: "Bruno" }
+                ],
+                correct: "b",
+                explanation: "Sofia claims the cup labeled 'Sofia', which was mistaken by Lucas."
+            },
+            {
+                id: "while-det-2",
+                text: "Who is the owner of the dog?",
+                options: [
+                    { key: "a", text: "Bruno" },
+                    { key: "b", text: "Sofia" },
+                    { key: "c", text: "Marco" },
+                    { key: "d", text: "Lucas" }
+                ],
+                correct: "c",
+                explanation: "Sofia mentions the dog's name is Bruno, but specifies he is her friend Marco's dog."
+            },
+            {
+                id: "while-infer-1",
+                text: "How does Lucas feel immediately after realizing he grabbed the wrong cup?",
+                options: [
+                    { key: "a", text: "Angry at the barista" },
+                    { key: "b", text: "Completely indifferent and unbothered" },
+                    { key: "c", text: "Slightly embarrassed and flustered" },
+                    { key: "d", text: "Disgusted by the drink" }
+                ],
+                correct: "c",
+                explanation: "Lucas gasps, exclaims 'Oh wow, you are right!', and states 'I am so sorry,' which demonstrates classic polite embarrassment."
+            },
+            {
+                id: "while-infer-2",
+                text: "Why does Lucas compliment Sofia's accent and point out the dog outside?",
+                options: [
+                    { key: "a", text: "He is trying to distract her so he can steal her coffee." },
+                    { key: "b", text: "He wants to practice speaking Italian with her." },
+                    { key: "c", text: "He is being friendly and wants to keep talking to her." },
+                    { key: "d", text: "He is in a hurry and wants to end the conversation quickly." }
+                ],
+                correct: "c",
+                explanation: "Lucas asks questions, highlights her background, and notes things outside to smoothly bridge the initial awkward mix-up into a pleasant chat."
+            }
+        ];
+
+        const postQuestions = [
+            {
+                id: "post-1",
+                text: "What can we learn about Lucas's personality from the conversation?",
+                options: [
+                    { key: "a", text: "He is rude and impatient." },
+                    { key: "b", text: "He is friendly and polite." },
+                    { key: "c", text: "He is dishonest." },
+                    { key: "d", text: "He is very shy." }
+                ],
+                correct: "b",
+                explanation: "Lucas apologizes repeatedly, uses friendly language, compliments Sofia, and carries on a respectful, warm conversation."
+            },
+            {
+                id: "post-2",
+                text: "Why do you think Sofia reacted positively when Lucas took her coffee by mistake?",
+                options: [
+                    { key: "a", text: "Because she did not notice the mistake." },
+                    { key: "b", text: "Because she wanted a free coffee." },
+                    { key: "c", text: "Because she understood it was an accident." },
+                    { key: "d", text: "Because she was angry." }
+                ],
+                correct: "c",
+                explanation: "She laughs softly and replies, 'Oh, it's okay Lucas! No problem.' indicating her understanding that coffee mixups are easy to make."
+            },
+            {
+                id: "post-3",
+                text: "What is the main message of this conversation?",
+                options: [
+                    { key: "a", text: "Small mistakes can lead to friendly interactions." },
+                    { key: "b", text: "People should never talk to strangers." },
+                    { key: "c", text: "Coffee shops are usually crowded." },
+                    { key: "d", text: "Dogs are the best way to make friends." }
+                ],
+                correct: "a",
+                explanation: "The conversation transforms from an accidental theft of coffee into a high-quality conversation connecting people of different cultural roots."
+            },
+            {
+                id: "post-4",
+                text: "If Sofia had more time, what would most likely happen next?",
+                options: [
+                    { key: "a", text: "She would argue with Lucas." },
+                    { key: "b", text: "She would leave immediately." },
+                    { key: "c", text: "She and Lucas might continue talking." },
+                    { key: "d", text: "Lucas would order another coffee." }
+                ],
+                correct: "c",
+                explanation: "The mutual interest in their home countries (Italy and Brazil) and easygoing rapport suggest they would have happily chatted longer over their coffees."
+            },
+            {
+                id: "post-5",
+                text: "What social skill is demonstrated by both speakers?",
+                options: [
+                    { key: "a", text: "Ignoring other people." },
+                    { key: "b", text: "Being polite and respectful during a misunderstanding." },
+                    { key: "c", text: "Refusing to communicate." },
+                    { key: "d", text: "Complaining about mistakes." }
+                ],
+                correct: "b",
+                explanation: "Both speakers handle a potentially annoying mix-up with grace, humor, and curiosity, illustrating excellent interpersonal communication."
+            }
+        ];
+
+        // State Store
+        let userAnswers = {};
+        let activeTabIdx = 1;
+        let viewerMode = 'photo'; // 'photo' or 'vector'
+
+        // On DOM Loaded
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            renderAllQuestions();
+            setupAudioController();
+            updateProgress();
+            selectVisualTab(1); // Set image 1 active by default
+        });
+
+        // Set Photos vs Storyboard Vector Mode
+        function setViewerMode(mode) {
+            viewerMode = mode;
+            const btnPhoto = document.getElementById('mode-btn-photo');
+            const btnVector = document.getElementById('mode-btn-vector');
+            const photoCont = document.getElementById('photo-container');
+            const vectorCont = document.getElementById('vector-container');
+
+            if (mode === 'photo') {
+                if (btnPhoto) btnPhoto.className = "px-2.5 py-1 rounded-md transition-all bg-white text-coffee-800 shadow-sm";
+                if (btnVector) btnVector.className = "px-2.5 py-1 rounded-md transition-all text-coffee-500 hover:text-coffee-800";
+                if (photoCont) photoCont.classList.remove('hidden');
+                if (vectorCont) vectorCont.classList.add('hidden');
+            } else {
+                if (btnPhoto) btnPhoto.className = "px-2.5 py-1 rounded-md transition-all text-coffee-500 hover:text-coffee-800";
+                if (btnVector) btnVector.className = "px-2.5 py-1 rounded-md transition-all bg-white text-coffee-800 shadow-sm";
+                if (photoCont) photoCont.classList.add('hidden');
+                if (vectorCont) vectorCont.classList.remove('hidden');
+            }
+
+            // Re-apply tab updates to make sure active visibility states are matching
+            selectVisualTab(activeTabIdx);
+        }
+
+        // Swap through visual files with beautiful selection border
+        function selectVisualTab(tabIdx) {
+            activeTabIdx = tabIdx;
+            
+            for (let i = 1; i <= 4; i++) {
+                const imgViewport = document.getElementById(`img-viewport-${i}`);
+                const svgFallback = document.getElementById(`svg-fallback-${i}`);
+                const thumbBtn = document.getElementById(`thumb-btn-${i}`);
+
+                // Guard lookup during parser errors or uninitialized DOM state
+                if (!imgViewport || !svgFallback || !thumbBtn) continue;
+
+                if (i === tabIdx) {
+                    thumbBtn.className = "p-1 border-2 border-coffee-600 rounded-xl bg-coffee-100 overflow-hidden scale-105 transition-all duration-200";
+                    
+                    // Show photo if we are in photo mode AND it hasn't failed to load
+                    if (viewerMode === 'photo' && imgViewport.getAttribute('data-errored') !== 'true') {
+                        imgViewport.classList.remove('hidden');
+                        svgFallback.classList.add('hidden');
+                    } else {
+                        // Force illustration layout
+                        imgViewport.classList.add('hidden');
+                        svgFallback.classList.remove('hidden');
+                    }
+                } else {
+                    imgViewport.classList.add('hidden');
+                    svgFallback.classList.add('hidden');
+                    thumbBtn.className = "p-1 border border-coffee-200 rounded-xl bg-white overflow-hidden hover:border-coffee-400 transition-all duration-200";
+                }
+            }
+
+            // Update Label Text safely
+            const labels = {
+                1: "Image 1: Sofia's Cup",
+                2: "Image 2: Dialogue & Laughter",
+                3: "Image 3: Origins Map (Italy & Brazil)",
+                4: "Image 4: Bruno the Dog outside"
+            };
+            const activeLabel = document.getElementById('active-image-label');
+            if (activeLabel) {
+                activeLabel.innerText = labels[tabIdx];
+            }
+        }
+
+        // Multi-image selection bypass (allows sandbox to load local image resources seamlessly)
+        function handleLocalImages(input) {
+            const files = Array.from(input.files);
+            if (!files.length) return;
+
+            // Sort files alphabetically to match them in correct order (1, 2, 3, 4)
+            files.sort((a, b) => a.name.localeCompare(b.name));
+
+            files.forEach((file, index) => {
+                const step = index + 1;
+                if (step <= 4) {
+                    const objectUrl = URL.createObjectURL(file);
+                    
+                    // Assign to viewports
+                    const viewport = document.getElementById(`img-viewport-${step}`);
+                    const thumb = document.getElementById(`thumb-img-${step}`);
+                    
+                    if (viewport) {
+                        viewport.src = objectUrl;
+                        viewport.removeAttribute('data-errored'); // Reset errored status
+                    }
+                    if (thumb) thumb.src = objectUrl;
+                }
+            });
+
+            // Set mode back to Photos & Refresh view
+            setViewerMode('photo');
+            selectVisualTab(activeTabIdx);
+        }
+
+        // Safe error recovery if browser denies sandboxed asset loading
+        function handleImageLoadError(idx) {
+            console.warn(`Local file loading failed for Image ${idx}. Triggering fallback illustration layout.`);
+            const imgViewport = document.getElementById(`img-viewport-${idx}`);
+            if (imgViewport) {
+                imgViewport.setAttribute('data-errored', 'true');
+            }
+            
+            // If the currently viewed tab has failed, instantly show the vector representation
+            selectVisualTab(activeTabIdx);
+        }
+
+        // Stage Navigator Switcher
+        function switchStage(stageId) {
+            document.querySelectorAll('.stage-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`stage-${stageId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.stage-nav-btn').forEach(btn => {
+                btn.className = "stage-nav-btn flex-shrink-0 flex items-center gap-3 px-4 py-3 rounded-xl border text-left transition-all w-full min-w-[180px] bg-white text-coffee-800 border-coffee-200 hover:bg-coffee-100/50";
+            });
+
+            const activeBtn = document.getElementById(`nav-${stageId}`);
+            if (activeBtn) {
+                activeBtn.className = "stage-nav-btn flex-shrink-0 flex items-center gap-3 px-4 py-3 rounded-xl border text-left transition-all w-full min-w-[180px] bg-coffee-800 text-white border-coffee-800 shadow-md";
+            }
+
+            if (stageId === 'results') {
+                calculateResults();
+            }
+        }
+
+        // Audio Player Controls
+        let audio;
+        function setupAudioController() {
+            audio = document.getElementById('audio-player');
+            const progressBar = document.getElementById('audio-progress');
+            const curTimeText = document.getElementById('audio-current-time');
+            const durationText = document.getElementById('audio-duration');
+            const fallbackUploader = document.getElementById('audio-error-fallback');
+
+            // Handle browser media blocked errors gracefully
+            audio.addEventListener('error', (err) => {
+                console.warn("Audio file auto-load error. Activating local file fallback mechanism.", err);
+                fallbackUploader.classList.remove('hidden');
+            });
+
+            audio.addEventListener('timeupdate', () => {
+                if (!audio.duration || isNaN(audio.duration) || !isFinite(audio.duration)) return;
+                const percent = (audio.currentTime / audio.duration) * 100;
+                progressBar.style.width = `${percent}%`;
+                curTimeText.innerText = formatTime(audio.currentTime);
+            });
+
+            audio.addEventListener('loadedmetadata', () => {
+                durationText.innerText = formatTime(audio.duration);
+                fallbackUploader.classList.add('hidden'); // Hide fallback if successfully loaded
+            });
+
+            audio.addEventListener('ended', () => {
+                document.getElementById('play-icon').setAttribute('data-lucide', 'play');
+                document.getElementById('play-text').innerText = "Play Audio";
+                document.getElementById('audio-state-icon').classList.remove('animate-pulse');
+                lucide.createIcons();
+            });
+        }
+
+        // Dynamic local file fallback handler in case iframe sandbox blocks relative paths
+        function handleLocalAudio(input) {
+            const file = input.files[0];
+            if (file) {
+                const url = URL.createObjectURL(file);
+                audio.src = url;
+                audio.load();
+                
+                // Immediately update styling
+                document.getElementById('audio-error-fallback').classList.add('hidden');
+                document.getElementById('play-icon').setAttribute('data-lucide', 'play');
+                document.getElementById('play-text').innerText = "Play Audio";
+                document.getElementById('audio-state-icon').classList.remove('animate-pulse');
+                lucide.createIcons();
+            }
+        }
+
+        function formatTime(secs) {
+            if (isNaN(secs) || !isFinite(secs)) return "0:00";
+            const m = Math.floor(secs / 60);
+            const s = Math.floor(secs % 60);
+            return `${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        function togglePlay() {
+            const playIcon = document.getElementById('play-icon');
+            const playText = document.getElementById('play-text');
+            const audioStateIcon = document.getElementById('audio-state-icon');
+
+            if (audio.paused) {
+                audio.play().then(() => {
+                    playIcon.setAttribute('data-lucide', 'pause');
+                    playText.innerText = "Pause Audio";
+                    audioStateIcon.classList.add('animate-pulse');
+                    lucide.createIcons();
+                }).catch(err => {
+                    console.error("Audio playback error:", err);
+                    document.getElementById('audio-error-fallback').classList.remove('hidden');
+                });
+            } else {
+                audio.pause();
+                playIcon.setAttribute('data-lucide', 'play');
+                playText.innerText = "Play Audio";
+                audioStateIcon.classList.remove('animate-pulse');
+                lucide.createIcons();
+            }
+        }
+
+        // Forward Audio Duration Checking
+        function rewindAudio(sec) {
+            if (isNaN(audio.currentTime) || !isFinite(audio.currentTime)) return;
+            audio.currentTime = Math.max(0, audio.currentTime - sec);
+        }
+
+        // Seek Audio
+        function forwardAudio(sec) {
+            if (!audio.duration || isNaN(audio.duration) || !isFinite(audio.duration)) return;
+            audio.currentTime = Math.min(audio.duration, audio.currentTime + sec);
+        }
+
+        function seekAudio(event) {
+            if (!audio.duration || isNaN(audio.duration) || !isFinite(audio.duration)) return;
+            const container = document.getElementById('audio-progress-container');
+            const rect = container.getBoundingClientRect();
+            const clickX = event.clientX - rect.left;
+            const percent = Math.max(0, Math.min(1, clickX / rect.width));
+            audio.currentTime = percent * audio.duration;
+        }
+
+        // Toggle dialogue transcripts
+        function toggleTranscript() {
+            const transcript = document.getElementById('transcript-content');
+            const chevron = document.getElementById('transcript-chevron');
+            transcript.classList.toggle('hidden');
+            if (transcript.classList.contains('hidden')) {
+                chevron.style.transform = "rotate(0deg)";
+            } else {
+                chevron.style.transform = "rotate(180deg)";
+            }
+        }
+
+        // Render Questions Logic
+        function renderAllQuestions() {
+            renderSection('pre-questions', preQuestions, 'pre');
+            renderSection('while-gist-questions', whileGistQuestions, 'while');
+            renderSection('while-detail-questions', whileDetailQuestions, 'while');
+            renderSection('post-questions', postQuestions, 'post');
+        }
+
+        function renderSection(containerId, questions, stage) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            questions.forEach((q, idx) => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-5 rounded-2xl border border-coffee-200 shadow-sm hover:shadow transition flex flex-col gap-3";
+                
+                const questionHeader = document.createElement('div');
+                questionHeader.className = "flex gap-2 items-start";
+                questionHeader.innerHTML = `
+                    <span class="font-serif font-bold text-coffee-500">${idx + 1}.</span>
+                    <p class="font-bold text-coffee-800 text-sm sm:text-base">${q.text}</p>
+                `;
+                card.appendChild(questionHeader);
+
+                const optionsContainer = document.createElement('div');
+                optionsContainer.className = "flex flex-col gap-2";
+
+                q.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.type = "button";
+                    btn.id = `btn-${q.id}-${opt.key}`;
+                    btn.className = "w-full text-left p-3 rounded-xl border border-coffee-200 text-xs sm:text-sm transition flex items-center justify-between hover:bg-coffee-50 group";
+                    btn.onclick = () => selectOption(q.id, opt.key, q.correct, questions, stage);
+
+                    btn.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-lg bg-coffee-100 group-hover:bg-coffee-200 flex items-center justify-center font-bold text-xs text-coffee-700 uppercase">${opt.key}</span>
+                            <span class="text-coffee-700 font-medium">${opt.text}</span>
+                        </div>
+                        <span class="feedback-icon hidden"></span>
+                    `;
+                    optionsContainer.appendChild(btn);
+                });
+
+                card.appendChild(optionsContainer);
+
+                // Explanation Block
+                const explanation = document.createElement('div');
+                explanation.id = `exp-${q.id}`;
+                explanation.className = "hidden p-3 bg-coffee-50 border border-coffee-200 rounded-xl text-xs text-coffee-600 leading-relaxed";
+                explanation.innerHTML = `<strong>Tutor's Note:</strong> ${q.explanation}`;
+                card.appendChild(explanation);
+
+                container.appendChild(card);
+            });
+        }
+
+        function selectOption(questionId, optionKey, correctKey, questionSet, stage) {
+            // Find current question in original array
+            const qObj = questionSet.find(x => x.id === questionId);
+            if (!qObj) return;
+
+            // Save state
+            userAnswers[questionId] = {
+                userChoice: optionKey,
+                isCorrect: optionKey === correctKey
+            };
+
+            // Style options immediately
+            qObj.options.forEach(opt => {
+                const btn = document.getElementById(`btn-${questionId}-${opt.key}`);
+                const iconSpan = btn.querySelector('.feedback-icon');
+                
+                // Clear state
+                btn.className = "w-full text-left p-3 rounded-xl border border-coffee-200 text-xs sm:text-sm transition flex items-center justify-between pointer-events-none";
+                iconSpan.className = "feedback-icon hidden";
+
+                if (opt.key === correctKey) {
+                    // Correct answer highlights green
+                    btn.classList.add('bg-green-50', 'border-green-300', 'text-green-800');
+                    iconSpan.className = "feedback-icon flex text-green-600";
+                    iconSpan.innerHTML = `<i data-lucide="check-circle" class="w-5 h-5"></i>`;
+                } else if (opt.key === optionKey) {
+                    // Wrong choice highlights red
+                    btn.classList.add('bg-red-50', 'border-red-300', 'text-red-800');
+                    iconSpan.className = "feedback-icon flex text-red-600";
+                    iconSpan.innerHTML = `<i data-lucide="x-circle" class="w-5 h-5"></i>`;
+                }
+            });
+
+            // Show explanation
+            const expBlock = document.getElementById(`exp-${questionId}`);
+            if (expBlock) expBlock.classList.remove('hidden');
+
+            lucide.createIcons();
+            updateProgress();
+        }
+
+        // Synchronized scrolling/visual focus on option hover/clicks
+        function updateProgress() {
+            // Calculate Pre
+            const preCount = preQuestions.filter(q => userAnswers[q.id]).length;
+            const preCountText = document.getElementById('pre-answered-count');
+            if (preCountText) preCountText.innerText = `${preCount}/4 Answered`;
+
+            // Calculate Post
+            const postCount = postQuestions.filter(q => userAnswers[q.id]).length;
+            const postCountText = document.getElementById('post-answered-count');
+            if (postCountText) postCountText.innerText = `${postCount}/5 Answered`;
+
+            // Total Questions count = 14 questions
+            const totalQs = 14;
+            const answeredCount = Object.keys(userAnswers).length;
+            const progressPercent = Math.round((answeredCount / totalQs) * 100);
+
+            const globalProgress = document.getElementById('global-progress');
+            if (globalProgress) globalProgress.style.width = `${progressPercent}%`;
+            
+            const globalProgressText = document.getElementById('global-progress-text');
+            if (globalProgressText) globalProgressText.innerText = `${progressPercent}%`;
+        }
+
+        function calculateResults() {
+            // Count segments
+            const preCorrect = preQuestions.filter(q => userAnswers[q.id]?.isCorrect).length;
+            const whileCorrect = [...whileGistQuestions, ...whileDetailQuestions].filter(q => userAnswers[q.id]?.isCorrect).length;
+            const postCorrect = postQuestions.filter(q => userAnswers[q.id]?.isCorrect).length;
+
+            document.getElementById('res-score-pre').innerText = `${preCorrect} / 4`;
+            document.getElementById('res-score-while').innerText = `${whileCorrect} / 5`;
+            document.getElementById('res-score-post').innerText = `${postCorrect} / 5`;
+
+            const totalQuestions = 14;
+            const totalCorrect = preCorrect + whileCorrect + postCorrect;
+            const totalPercent = Math.round((totalCorrect / totalQuestions) * 100);
+
+            document.getElementById('res-score-total').innerText = `${totalPercent}%`;
+
+            // Personalized Tutor Feedback Message
+            let feedback = "";
+            if (totalPercent === 100) {
+                feedback = "Outstanding Perfect Score! You picked up every linguistic clue, mapped the origins flawlessly, understood Sophia's friendly dynamic, and noted little details like Bruno the friend's dog. Excellent active listening skills!";
+            } else if (totalPercent >= 75) {
+                feedback = "Great job! You have solid listening comprehension and are highly aware of social interactions and cultural cues. Go over the specific details you missed in the conversation to polish your comprehension skills even further.";
+            } else if (totalPercent >= 50) {
+                feedback = "Good effort! You captured the main ideas well, but missed some specific background details, such as where Sophia is from or who owns the dog Bruno. Try playing the audio again with the transcript toggled on to learn new words.";
+            } else {
+                feedback = "Keep practicing! Comprehending real conversation dynamics with differing accents takes time and consistency. Use the conversation transcript to follow along, note down key phrases, and retry the exercise.";
+            }
+
+            document.getElementById('tutor-feedback-msg').innerText = feedback;
+        }
+
+        function restartBoard() {
+            userAnswers = {};
+            audio.pause();
+            audio.currentTime = 0;
+            
+            // Reset player GUI
+            document.getElementById('play-icon').setAttribute('data-lucide', 'play');
+            document.getElementById('play-text').innerText = "Play Audio";
+            document.getElementById('audio-state-icon').classList.remove('animate-pulse');
+
+            // Reset image scale/tab focus
+            selectVisualTab(1);
+
+            // Re-render and navigate back to beginning
+            renderAllQuestions();
+            updateProgress();
+            switchStage('pre');
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
